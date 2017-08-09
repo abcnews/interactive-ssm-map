@@ -1,16 +1,15 @@
 const Preact = require('preact');
+const values = require('object-values');
 const d3 = require('d3-selection');
 const force = require('d3-force');
 const transition = require('d3-transition');
 const TopoJSON = require('topojson');
 const ranger = require('power-ranger');
 const Geo = require('d3-geo');
-const Scale = require('d3-scale');
+// const Scale = require('d3-scale');
+const scale = require('../data/colour-scale');
 
 const mapJSON = require('../data/map.quantized.json');
-
-// TODO: This could be loaded from the page?
-const voteJSON = require('../data/ssm-disagree.csv');
 
 const styles = require('./map.scss');
 
@@ -72,29 +71,15 @@ class Map extends Preact.Component {
 
         path = Geo.geoPath().projection(projection);
 
-        // Index the support CSV
-        let support = {};
-        let value;
-        let min = 1;
-        let max = 0;
-        voteJSON.forEach(row => {
-            value = parseFloat(row['Total disagree']);
-            support[row['Row Labels']] = value;
-            if (value < min) {
-                min = value;
-            }
-            if (value > max) {
-                max = value;
-            }
-        });
-
         // Graft the support onto the map data
         data = TopoJSON.feature(
             mapJSON,
             mapJSON.objects.map
         ).features.map(f => {
-            f.properties.support =
-                support[f.properties.elect_div.toUpperCase()];
+            f.properties.support = this.props.data.getIn([
+                f.properties.elect_div.toUpperCase(),
+                'value'
+            ]);
             f.properties.name = f.properties.elect_div;
 
             f.x = path.centroid(f)[0];
@@ -111,40 +96,7 @@ class Map extends Preact.Component {
 
         features = svg.append('g').attr('class', styles.features);
 
-        var colours = Scale.scaleQuantize()
-            .domain([min, max])
-            .range([
-                '#ff0000',
-                '#ff3500',
-                '#ff4d00',
-                '#ff6100',
-                '#ff7200',
-                '#ff8100',
-                '#ff9000',
-                '#ff9e00',
-                '#ffac00',
-                '#ffb900',
-                '#ffc600',
-                '#ffd300',
-                '#ffe000',
-                '#ffec00',
-                '#fff900',
-                '#f9fd00',
-                '#edfa00',
-                '#e0f700',
-                '#d4f400',
-                '#c7f000',
-                '#baed00',
-                '#adea00',
-                '#9fe600',
-                '#91e200',
-                '#83df00',
-                '#73db00',
-                '#62d700',
-                '#4fd400',
-                '#36d000',
-                '#00cc00'
-            ]);
+        var colours = scale(this.props.data);
 
         features
             .selectAll('path')
@@ -159,8 +111,6 @@ class Map extends Preact.Component {
 
     // Draw the map
     draw(marker) {
-        console.log('marker', marker);
-
         // find the electorate
         let d = data.find(datum => {
             if (!marker.config.electorate) return false;
@@ -206,15 +156,11 @@ class Map extends Preact.Component {
             //     );
             k = 50;
 
-            console.log('font size?', k.toFixed(2) + 'px');
-
             tooltip
                 .text(d.properties.name)
                 .attr('dy', -0.3 + 'px')
                 .attr('x', d.x + 'px')
                 .attr('y', d.y + 'px');
-
-            console.log('tooltip', tooltip);
 
             electorate = d;
         } else {

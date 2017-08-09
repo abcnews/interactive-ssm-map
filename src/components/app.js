@@ -1,83 +1,44 @@
+require('es6-promise/auto');
+require('isomorphic-fetch');
+
 const Preact = require('preact');
+const Immutable = require('immutable');
 
-const { initMarkers } = require('../loader');
-const Marker = require('./marker');
-const Background = require('./background');
-
-const styles = require('./app.scss');
+const Scrolly = require('./scrolly');
+const Plot = require('./plot');
 
 class App extends Preact.Component {
     constructor(props) {
         super(props);
 
-        this.onScroll = this.onScroll.bind(this);
-
         this.state = {
-            markers: initMarkers('mark'),
-            currentMarker: null,
-            isBackgroundFixed: false
+            data: null
         };
     }
 
     componentDidMount() {
-        window.__ODYSSEY__.scheduler.subscribe(this.onScroll);
-    }
+        let data = {};
+        fetch(this.props.dataURL).then(r => r.text()).then(text => {
+            text.split('\n').slice(1).forEach(row => {
+                row = row.split(',');
 
-    componentWillUnmount() {
-        window.__ODYSSEY__.scheduler.unsubscribe(this.onScroll);
-    }
-
-    onScroll(view) {
-        // Work out which marker is the current one
-        const fold = view.height * 0.4;
-        const pastMarkers = this.state.markers.filter(marker => {
-            return (
-                marker.element &&
-                marker.element.getBoundingClientRect().top < fold
-            );
-        });
-
-        let lastSeenMarker = pastMarkers[pastMarkers.length - 1];
-        if (!lastSeenMarker) lastSeenMarker = this.state.markers[0];
-        if (this.state.currentMarker !== lastSeenMarker) {
-            this.setState({
-                currentMarker: lastSeenMarker
+                if (row.length === 2) {
+                    data[row[0].toUpperCase()] = {
+                        name: row[0],
+                        value: parseFloat(row[1])
+                    };
+                }
             });
-        }
 
-        // Work out if the background should be fixed or not
-        if (this.wrapper) {
-            const bounds = this.wrapper.getBoundingClientRect();
-
-            let backgroundAttachment;
-            if (bounds.top > 0) {
-                backgroundAttachment = 'before';
-            } else if (bounds.bottom < view.height) {
-                backgroundAttachment = 'after';
-            } else {
-                backgroundAttachment = 'during';
-            }
-
-            this.setState({ backgroundAttachment });
-        }
+            this.setState({ data: Immutable.fromJS(data) });
+        });
     }
 
     render() {
         return (
-            <div
-                ref={el => (this.wrapper = el)}
-                className={'u-full ' + styles.wrapper}>
-                <Background
-                    marker={this.state.currentMarker}
-                    attachment={this.state.backgroundAttachment}
-                />
-                {this.state.markers.map(marker =>
-                    <Marker
-                        marker={marker}
-                        reference={el => (marker.element = el)}
-                        isCurrentMarker={this.state.currentMarker === marker}
-                    />
-                )}
+            <div>
+                <Scrolly data={this.state.data} />
+                <Plot data={this.state.data} />
             </div>
         );
     }

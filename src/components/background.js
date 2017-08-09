@@ -13,7 +13,7 @@ class Background extends Preact.Component {
                 className={`${styles.wrapper} ${styles[
                     this.props.attachment
                 ]}`}>
-                <Map marker={marker} />
+                <Map data={this.props.data} marker={marker} />
             </div>
         );
     }

@@ -5,7 +5,11 @@ const element = document.querySelector('[data-scrolly-story-root]');
 let root;
 let render = () => {
     let App = require('./components/app');
-    root = Preact.render(<App />, element, root);
+    root = Preact.render(
+        <App dataURL={element.getAttribute('data-data-url')} />,
+        element,
+        root
+    );
 };
 
 // Do some hot reload magic with errors
