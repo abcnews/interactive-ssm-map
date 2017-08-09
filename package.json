@@ -1,0 +1,40 @@
+{
+    "name": "interactive-scrolly-marriage-equality",
+    "version": "1.0.0",
+    "description": "A Preact-enabled ABC News story",
+    "license": "MIT",
+    "private": true,
+    "contributors": [
+        "Nathan Hoad <nathan@nathanhoad.net>"
+    ],
+    "aunty": {
+        "deploy": {
+            "contentftp": {
+                "files": "**",
+                "from": "build",
+                "to": "/www/res/sites/news-projects/<name>/<id>"
+            }
+        }
+    },
+    "scripts": {
+        "start": "aunty serve"
+    },
+    "devDependencies": {
+        "@abcnews/aunty": "^4.2.1",
+        "prettier": "^1.5.3"
+    },
+    "dependencies": {
+        "csv-loader": "^2.1.1",
+        "d3-force": "^1.0.6",
+        "d3-geo": "^1.6.4",
+        "d3-scale": "^1.0.6",
+        "d3-selection": "^1.1.0",
+        "d3-transition": "^1.1.0",
+        "odyssey": "git+ssh://git@stash.abc-dev.net.au:7999/news/odyssey.git",
+        "power-ranger": "^1.1.0",
+        "preact": "^8.2.1",
+        "preact-compat": "^3.16.0",
+        "smoothscroll": "^0.3.0",
+        "topojson": "^3.0.0"
+    }
+}

@@ -1,0 +1,24 @@
+path {
+    stroke-width: 0.5px;
+    stroke: white;
+    fill: #999;
+}
+
+.circle {
+    stroke-width: 0.5px;
+    stroke: black;
+    cursor: pointer;
+}
+
+.tooltip {
+    // position: absolute;
+    // background-color: white;
+    // border: 1px solid black;
+    // color: black;
+    // font-weight: bold;
+    // padding: 4px 8px;
+    // display: none;
+    fill: black;
+    font-size: 0.5px;
+    text-anchor: middle;
+}
