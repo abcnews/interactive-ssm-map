@@ -16,7 +16,8 @@ const styles = require('./map.scss');
 let features;
 let path;
 let centered;
-let tooltip;
+let location1;
+let locations;
 let circles;
 let simulation;
 let width;
@@ -106,7 +107,12 @@ class Map extends Preact.Component {
             .attr('d', path)
             .style('fill', d => colours(d.properties.support));
 
-        tooltip = features.append('text').attr('class', styles.tooltip);
+        location1 = features.append('text').attr('class', styles.locationName);
+        locations = [
+            features.append('text').attr('class', styles.locationNameSmall),
+            features.append('text').attr('class', styles.locationNameSmall),
+            features.append('text').attr('class', styles.locationNameSmall)
+        ];
     }
 
     // Draw the map
@@ -121,16 +127,33 @@ class Map extends Preact.Component {
             );
         });
 
+        // Work out any other labels for electorates
+        let others = (marker.config.and || '')
+            .split('and')
+            .map(o => {
+                if (!o) return null;
+
+                // find each of the others in the data list
+                return data.find(
+                    datum =>
+                        datum.properties.name.toLowerCase() === o.toLowerCase()
+                );
+            })
+            .filter(m => m);
+
         if (d) {
-            this.zoomTo(d);
+            this.zoomTo(d, others);
         } else {
             this.zoomTo();
         }
     }
 
-    zoomTo(d) {
+    zoomTo(d, others) {
         // Don't zoom again
         if (this.state.electorate === d) return;
+
+        // Show labels for other electorates in the area
+        others = others || [];
 
         let x;
         let y;
@@ -148,27 +171,40 @@ class Map extends Preact.Component {
 
             x = centroid[0];
             y = centroid[1];
-            // k =
-            //     0.15 /
-            //     Math.max(
-            //         (bounds[1][0] - bounds[0][0]) / width,
-            //         (bounds[1][1] - bounds[0][1]) / height
-            //     );
-            k = 50;
+            k = 50; // Hardcoded zoom
 
-            tooltip
-                .text(d.properties.name)
+            location1
+                .text(
+                    d.properties.name +
+                        '(' +
+                        (Math.round(d.properties.support * 100) + '%)')
+                )
                 .attr('dy', -0.3 + 'px')
                 .attr('x', d.x + 'px')
                 .attr('y', d.y + 'px');
+
+            // Show any other electorates that are nearby
+            locations.forEach(l => l.text(''));
+            others.forEach((other, index) => {
+                locations[index]
+                    .text(
+                        other.properties.name +
+                            '(' +
+                            (Math.round(other.properties.support * 100) + '%)')
+                    )
+                    .attr('dy', -0.3 + 'px')
+                    .attr('x', other.x + 'px')
+                    .attr('y', other.y + 'px');
+            });
 
             electorate = d;
         } else {
             x = width / 2;
             y = height / 2;
             k = 1;
-            // tooltip.style('display', 'none');
-            tooltip.text('');
+
+            location1.text('');
+            locations.forEach(l => l.text(''));
 
             electorate = null;
         }
@@ -176,9 +212,6 @@ class Map extends Preact.Component {
         // Highlight the new feature
         features
             .selectAll('path')
-            // .classed(styles.highlighted, function(d) {
-            //     return d === centered;
-            // })
             .transition()
             .duration(1400)
             .style('stroke-width', 1 / k + 'px'); // Keep the border width constant

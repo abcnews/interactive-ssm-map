@@ -60,6 +60,9 @@ class Plot extends Preact.Component {
                                     <div className={styles.support}>
                                         <div className={styles.bar}>
                                             <div
+                                                aria-label={`value ${datum
+                                                    .get('value')
+                                                    .toFixed(2)}`}
                                                 className={styles.barValue}
                                                 style={{
                                                     width: `${100 *

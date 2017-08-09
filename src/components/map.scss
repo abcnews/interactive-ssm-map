@@ -10,15 +10,20 @@ path {
     cursor: pointer;
 }
 
-.tooltip {
-    // position: absolute;
-    // background-color: white;
-    // border: 1px solid black;
-    // color: black;
-    // font-weight: bold;
-    // padding: 4px 8px;
-    // display: none;
+.location-name {
     fill: black;
+    stroke-width: 0.02px;
+    stroke: white;
+    font-size: 0.7px;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.location-name-small {
+    fill: black;
+    stroke-width: 0.02px;
+    stroke: white;
     font-size: 0.5px;
+    font-weight: bold;
     text-anchor: middle;
 }
