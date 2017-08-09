@@ -142,13 +142,13 @@ class Map extends Preact.Component {
             .filter(m => m);
 
         if (d) {
-            this.zoomTo(d, others);
+            this.zoomTo(marker, d, others);
         } else {
-            this.zoomTo();
+            this.zoomTo(marker);
         }
     }
 
-    zoomTo(d, others) {
+    zoomTo(marker, d, others) {
         // Don't zoom again
         if (this.state.electorate === d) return;
 
@@ -171,15 +171,24 @@ class Map extends Preact.Component {
 
             x = centroid[0];
             y = centroid[1];
-            k = 50; // Hardcoded zoom
+
+            if (marker.config.zoom) {
+                k = parseInt(marker.config.zoom, 10);
+            } else {
+                k = 50; // Hardcoded zoom
+            }
+
+            console.log('font size?', 35 / k, '0.7?');
 
             location1
                 .text(
                     d.properties.name +
-                        '(' +
+                        ' (' +
                         (Math.round(d.properties.support * 100) + '%)')
                 )
-                .attr('dy', -0.3 + 'px')
+                .style('font-size', 35 / k + 'px')
+                .style('stroke-width', 1 / k + 'px')
+                .attr('dy', 0 - 30 / k + 'px')
                 .attr('x', d.x + 'px')
                 .attr('y', d.y + 'px');
 
@@ -189,10 +198,12 @@ class Map extends Preact.Component {
                 locations[index]
                     .text(
                         other.properties.name +
-                            '(' +
+                            ' (' +
                             (Math.round(other.properties.support * 100) + '%)')
                     )
-                    .attr('dy', -0.3 + 'px')
+                    .style('font-size', 30 / k + 'px')
+                    .style('stroke-width', 1 / k + 'px')
+                    .attr('dy', 0 - 20 / k + 'px')
                     .attr('x', other.x + 'px')
                     .attr('y', other.y + 'px');
             });
