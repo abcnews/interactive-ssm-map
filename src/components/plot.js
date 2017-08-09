@@ -38,17 +38,43 @@ class Plot extends Preact.Component {
 
         return (
             <div className={styles.wrapper}>
-                <button onClick={e => this.setState({ sortBy: null })}>
-                    A-Z
-                </button>
-                <button onClick={e => this.setState({ sortBy: 'asc' })}>
-                    Low-High
-                </button>
-                <button onClick={e => this.setState({ sortBy: 'desc' })}>
-                    High-Low
-                </button>
+                <div className={styles.toolbar}>
+                    <button
+                        onClick={e => this.setState({ sortBy: null })}
+                        className={
+                            this.state.sortBy === null
+                                ? styles.activeButton
+                                : ''
+                        }>
+                        A-Z
+                    </button>
+                    <button
+                        onClick={e => this.setState({ sortBy: 'asc' })}
+                        className={
+                            this.state.sortBy === 'asc'
+                                ? styles.activeButton
+                                : ''
+                        }>
+                        Low-High
+                    </button>
+                    <button
+                        onClick={e => this.setState({ sortBy: 'desc' })}
+                        className={
+                            this.state.sortBy === 'desc'
+                                ? styles.activeButton
+                                : ''
+                        }>
+                        High-Low
+                    </button>
+                </div>
 
                 <div className={styles.table}>
+                    <div className={styles.row}>
+                        <div className={styles.name} />
+                        <div className={`${styles.support} ${styles.guide}`}>
+                            50%
+                        </div>
+                    </div>
                     {sortedData
                         .toList()
                         .map(datum => {
@@ -66,10 +92,7 @@ class Plot extends Preact.Component {
                                                 className={styles.barValue}
                                                 style={{
                                                     width: `${100 *
-                                                        datum.get('value')}%`,
-                                                    backgroundColor: this.colour(
-                                                        datum.get('value')
-                                                    )
+                                                        datum.get('value')}%`
                                                 }}
                                             />
                                         </div>
