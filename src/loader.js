@@ -1,5 +1,4 @@
-const Odyssey = window.__ODYSSEY__;
-const { getMarkers } = Odyssey.utils.anchors;
+const { getSections, getMarkers } = window.__ODYSSEY__.utils.anchors;
 
 function alternatingCaseToObject(string) {
     let o = {};
@@ -15,7 +14,27 @@ function alternatingCaseToObject(string) {
     return o;
 }
 
-function initMarkers(name) {
+function initSections(names) {
+    let sections = {};
+
+    getSections(names).forEach(section => {
+        let html = '';
+        section.betweenNodes.forEach(node => {
+            if (node.style && node.outerHTML) {
+                node.style.setProperty('display', '');
+                html += node.outerHTML;
+                node.style.setProperty('display', 'none');
+            }
+        });
+        section.html = html;
+
+        sections[section.name] = section;
+    });
+
+    return sections;
+}
+
+function initMarkers(name, section) {
     // ABC colours
     const colours = [
         '#3C6998',
@@ -41,6 +60,12 @@ function initMarkers(name) {
                 nextNode.getAttribute('name').indexOf(name) === 0
             ) {
                 nextNode = null;
+            } else if (
+                nextNode.getAttribute &&
+                nextNode.getAttribute('name') === 'end' + section
+            ) {
+                // This is the end of the whole section
+                nextNode = null;
             } else {
                 if (nextNode.outerHTML) {
                     nextNode.style.setProperty('display', '');
@@ -48,12 +73,6 @@ function initMarkers(name) {
                     nextNode.style.setProperty('display', 'none');
                 }
                 nextNode = nextNode.nextSibling;
-
-                // TODO: Work out how to keep a cache of the old DOM so hot reload works nicely
-                // Remove current article from the DOM
-                // if (nextNode) {
-                //     nextNode.previousSibling.remove();
-                // }
             }
         }
         marker.html = html;
@@ -62,4 +81,4 @@ function initMarkers(name) {
     });
 }
 
-module.exports = { initMarkers };
+module.exports = { initMarkers, initSections };

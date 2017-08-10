@@ -178,8 +178,6 @@ class Map extends Preact.Component {
                 k = 50; // Hardcoded zoom
             }
 
-            console.log('font size?', 35 / k, '0.7?');
-
             location1
                 .text(
                     d.properties.name +

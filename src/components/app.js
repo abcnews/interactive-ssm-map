@@ -4,14 +4,17 @@ require('isomorphic-fetch');
 const Preact = require('preact');
 const Immutable = require('immutable');
 
+const { initSections } = require('../loader');
 const Scrolly = require('./scrolly');
 const Plot = require('./plot');
+const Html = require('./html');
 
 class App extends Preact.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            sections: initSections(['scrollyteller', 'chart']),
             data: null
         };
     }
@@ -38,6 +41,10 @@ class App extends Preact.Component {
         return (
             <div>
                 <Scrolly data={this.state.data} />
+                <Html
+                    className="u-richtext"
+                    html={this.state.sections.chart.html}
+                />
                 <Plot data={this.state.data} />
             </div>
         );

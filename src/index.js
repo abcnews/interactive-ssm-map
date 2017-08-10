@@ -1,6 +1,8 @@
 const Preact = require('preact');
 
-const element = document.querySelector('[data-scrolly-story-root]');
+const element = document.querySelector(
+    '[data-interactive-marriage-equality-root]'
+);
 
 let root;
 let render = () => {
