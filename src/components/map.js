@@ -113,6 +113,8 @@ class Map extends Preact.Component {
             features.append('text').attr('class', styles.locationNameSmall),
             features.append('text').attr('class', styles.locationNameSmall)
         ];
+
+        this.zoomTo();
     }
 
     // Draw the map
@@ -150,7 +152,7 @@ class Map extends Preact.Component {
 
     zoomTo(marker, d, others) {
         // Don't zoom again
-        if (this.state.electorate === d) return;
+        if (d && this.state.electorate === d) return;
 
         // Show labels for other electorates in the area
         others = others || [];
@@ -172,7 +174,7 @@ class Map extends Preact.Component {
             x = centroid[0];
             y = centroid[1];
 
-            if (marker.config.zoom) {
+            if (marker && marker.config.zoom) {
                 k = parseInt(marker.config.zoom, 10);
             } else {
                 k = 50; // Hardcoded zoom
@@ -210,7 +212,7 @@ class Map extends Preact.Component {
         } else {
             x = width / 2;
             y = height / 2;
-            k = 1;
+            k = 0.8;
 
             location1.text('');
             locations.forEach(l => l.text(''));
