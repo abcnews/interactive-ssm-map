@@ -9,7 +9,10 @@ class Marker extends Preact.Component {
 
         return (
             <div ref={this.props.reference} className={styles.wrapper}>
-                <HTML html={marker.html} className={styles.detail} />
+                <HTML
+                    html={marker.html}
+                    className={`u-richtext-invert ${styles.detail}`}
+                />
             </div>
         );
     }

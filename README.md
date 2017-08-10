@@ -3,6 +3,17 @@
 A project generated from [aunty](https://github.com/abcnews/aunty)'s `basic-story` template.
 
 
+## TODO
+
+split markers into paragraphs
+
+rearrange the #chart tag to be where the chart comes in
+
+change the colours to white to purple
+
+change the labels to be more like pins
+
+
 ## Hot Reload
 
 Hot reload is enabled by default on the development server. Your 'app' should be separated into the `src/index.js` loader

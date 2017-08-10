@@ -34,24 +34,15 @@ function initSections(names) {
     return sections;
 }
 
+// Create markers from actual markers and anything that follows them within the section
 function initMarkers(name, section) {
-    // ABC colours
-    const colours = [
-        '#3C6998',
-        '#B05154',
-        '#1B7A7D',
-        '#8D4579',
-        '#97593F',
-        '#605487',
-        '#306C3F'
-    ];
+    let markers = [];
 
-    return getMarkers(name).map((marker, index) => {
+    getMarkers(name).forEach((marker, index) => {
         marker.config = alternatingCaseToObject(marker.configSC);
 
         // While has next sibling and next sibling is valid (not a marker and not null)
         let nextNode = marker.node.nextSibling;
-        let html = '';
         while (nextNode) {
             // Found the next marker
             if (
@@ -67,18 +58,22 @@ function initMarkers(name, section) {
                 // This is the end of the whole section
                 nextNode = null;
             } else {
-                if (nextNode.outerHTML) {
+                // For each following <p> tag create a new marker
+                if (nextNode.tagName === 'P') {
                     nextNode.style.setProperty('display', '');
-                    html += nextNode.outerHTML;
+                    markers.push({
+                        config: marker.config,
+                        html: nextNode.outerHTML
+                    });
                     nextNode.style.setProperty('display', 'none');
                 }
+
                 nextNode = nextNode.nextSibling;
             }
         }
-        marker.html = html;
-        marker.colour = colours[index % colours.length];
-        return marker;
     });
+
+    return markers;
 }
 
 module.exports = { initMarkers, initSections };
