@@ -5,8 +5,7 @@ A project generated from [aunty](https://github.com/abcnews/aunty)'s `basic-stor
 
 ## TODO
 
-
-change the labels to be more like pins
+* change the labels to be more like pins
 
 
 ## Hot Reload

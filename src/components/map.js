@@ -6,13 +6,13 @@ const transition = require('d3-transition');
 const TopoJSON = require('topojson');
 const ranger = require('power-ranger');
 const Geo = require('d3-geo');
-// const Scale = require('d3-scale');
 const scale = require('../data/colour-scale');
 
 const mapJSON = require('../data/map.quantized.json');
 
 const styles = require('./map.scss');
 
+let svg;
 let features;
 let path;
 let centered;
@@ -30,8 +30,9 @@ class Map extends Preact.Component {
     constructor(props) {
         super(props);
 
-        this.hasLoaded = false;
         this.electorate = null;
+
+        this.onResize = this.onResize.bind(this);
 
         this.initMap = this.initMap.bind(this);
         this.draw = this.draw.bind(this);
@@ -51,10 +52,45 @@ class Map extends Preact.Component {
 
     componentDidMount() {
         this.initMap();
+
+        window.__ODYSSEY__.scheduler.subscribe(this.onResize);
+    }
+
+    componentWillUnmount() {
+        window.__ODYSSEY__.scheduler.unsubscribe(this.onResize);
     }
 
     render() {
         return <div ref={el => (this.wrapper = el)} />;
+    }
+
+    onResize(viewport) {
+        if (viewport.width !== width || viewport.height !== height) {
+            width = viewport.width;
+            height = viewport.height;
+
+            projection = Geo.geoMercator()
+                .scale(width * 0.9)
+                .center([131, -27])
+                .translate([width / 2, height / 2]);
+
+            path = Geo.geoPath().projection(projection);
+
+            data.forEach(f => {
+                f.properties.support = this.props.data.getIn([
+                    f.properties.elect_div.toUpperCase(),
+                    'value'
+                ]);
+                f.properties.name = f.properties.elect_div;
+
+                f.x = path.centroid(f)[0];
+                f.y = path.centroid(f)[1];
+            });
+
+            svg.attr('width', width).attr('height', height);
+
+            features.selectAll('path').attr('d', path);
+        }
     }
 
     initMap() {
@@ -89,7 +125,7 @@ class Map extends Preact.Component {
             return f;
         });
 
-        const svg = d3
+        svg = d3
             .select(this.wrapper)
             .append('svg')
             .attr('width', width)
@@ -161,23 +197,17 @@ class Map extends Preact.Component {
         let y;
         let k;
 
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
         let electorate;
 
         if (d && this.state.electorate !== d) {
             // Compute the new map center and scale to zoom to
-            let centroid = path.centroid(d);
-            let bounds = path.bounds(d.geometry);
-
-            x = centroid[0];
-            y = centroid[1];
+            x = d.x;
+            y = d.y;
 
             if (marker && marker.config.zoom) {
                 k = parseInt(marker.config.zoom, 10);
             } else {
-                k = 50; // Hardcoded zoom
+                k = 50; // Ok-ish zoom to a normal electorate level (based on Brisbane)
             }
 
             location1
