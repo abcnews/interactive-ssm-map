@@ -5,11 +5,6 @@ A project generated from [aunty](https://github.com/abcnews/aunty)'s `basic-stor
 
 ## TODO
 
-split markers into paragraphs
-
-rearrange the #chart tag to be where the chart comes in
-
-change the colours to white to purple
 
 change the labels to be more like pins
 

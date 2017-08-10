@@ -4,13 +4,25 @@ const element = document.querySelector(
     '[data-interactive-marriage-equality-root]'
 );
 
-let root;
+// Do some DOM magic to find a place to mount the chart
+const chartLocation = document.querySelector('[name="chart"]');
+const chartElement = document.createElement('div');
+chartLocation.parentNode.insertBefore(chartElement, chartLocation.nextSibling);
+
+let mapRoot;
+let chartRoot;
 let render = () => {
     let App = require('./components/app');
-    root = Preact.render(
-        <App dataURL={element.getAttribute('data-data-url')} />,
+    mapRoot = Preact.render(
+        <App view="map" dataURL={element.getAttribute('data-data-url')} />,
         element,
-        root
+        mapRoot
+    );
+
+    chartRoot = Preact.render(
+        <App view="chart" dataURL={element.getAttribute('data-data-url')} />,
+        chartElement,
+        chartRoot
     );
 };
 
@@ -24,7 +36,7 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
         } catch (e) {
             // Render the error to the screen in place of the actual app
             const ErrorBox = require('./error-box');
-            root = Preact.render(<ErrorBox error={e} />, element, root);
+            mapRoot = Preact.render(<ErrorBox error={e} />, element, mapRoot);
         }
     };
 

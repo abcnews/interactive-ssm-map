@@ -14,7 +14,7 @@ class App extends Preact.Component {
         super(props);
 
         this.state = {
-            sections: initSections(['scrollyteller', 'chart']),
+            sections: initSections(['scrollyteller']),
             data: null
         };
     }
@@ -38,16 +38,13 @@ class App extends Preact.Component {
     }
 
     render() {
-        return (
-            <div>
-                <Scrolly data={this.state.data} />
-                <Html
-                    className="u-richtext"
-                    html={this.state.sections.chart.html}
-                />
-                <Plot data={this.state.data} />
-            </div>
-        );
+        switch (this.props.view) {
+            default:
+            case 'map':
+                return <Scrolly data={this.state.data} />;
+            case 'chart':
+                return <Plot data={this.state.data} />;
+        }
     }
 }
 
