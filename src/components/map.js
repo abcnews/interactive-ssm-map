@@ -89,6 +89,8 @@ class Map extends Preact.Component {
             svg.attr('width', width).attr('height', height);
 
             features.selectAll('path').attr('d', path);
+
+            this.draw(this.props.marker);
         }
     }
 

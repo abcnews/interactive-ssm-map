@@ -1,6 +1,6 @@
 .wrapper {
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     background: #333;
     transition: all 0.5s ease;
 }
@@ -35,6 +35,10 @@
     border-radius: 3px;
 }
 
+.bump-bottom {
+    // bottom: 70px !important;
+}
+
 .legend-title {
     text-align: center;
     font-size: 15px;
@@ -46,6 +50,7 @@
     height: 10px;
     width: 100%;
     margin-bottom: 5px;
+    background: linear-gradient(90deg, #91b6c9, #fafcfd 50%, #8d0098);
 }
 
 .legend-labels {
