@@ -144,10 +144,10 @@ class Map extends Preact.Component {
 
         locationLabel = features.append('g');
 
-        let balloonWidth = 300;
+        let balloonWidth = 280;
         let locationLabelBalloon = locationLabel
             .append('g')
-            .attr('fill', 'white')
+            .attr('fill', 'black')
             .attr('transform', `translate(-${balloonWidth / 2}, -69)`);
         locationLabelBalloon
             .append('polygon')
@@ -159,16 +159,17 @@ class Map extends Preact.Component {
             .attr('y', 0)
             .attr('rx', 3)
             .attr('ry', 3)
-            .attr('width', 300)
+            .attr('width', balloonWidth)
             .attr('height', 50);
         locationLabelBalloon
             .append('text')
-            .attr('font-size', 25)
-            .attr('fill', 'black')
+            .attr('font-size', 22)
+            .attr('fill', 'white')
             .attr('x', 6)
             .attr('y', 33)
             .text('Sydney');
 
+        // Zoom to Aus
         this.zoomTo();
     }
 
