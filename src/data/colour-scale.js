@@ -27,9 +27,9 @@ const colours = [
     '#8d0098'
 ];
 
-module.exports = data => {
-    let min = data.sortBy(d => d.get('value')).first().get('value');
-    let max = data.sortBy(d => d.get('value')).last().get('value');
+module.exports = () => {
+    let min = 0.2;
+    let max = 0.8;
 
     return Scale.scaleQuantize().domain([min, max]).range(colours);
 };

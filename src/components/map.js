@@ -134,7 +134,7 @@ class Map extends Preact.Component {
 
         features = svg.append('g').attr('class', styles.features);
 
-        let colours = scale(this.props.data);
+        let colours = scale();
 
         features
             .selectAll('path')
