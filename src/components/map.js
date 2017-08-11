@@ -16,8 +16,7 @@ let svg;
 let features;
 let path;
 let centered;
-let location1;
-let locations;
+let locationLabel;
 let circles;
 let simulation;
 let width;
@@ -133,7 +132,7 @@ class Map extends Preact.Component {
 
         features = svg.append('g').attr('class', styles.features);
 
-        var colours = scale(this.props.data);
+        let colours = scale(this.props.data);
 
         features
             .selectAll('path')
@@ -143,12 +142,33 @@ class Map extends Preact.Component {
             .attr('d', path)
             .style('fill', d => colours(d.properties.support));
 
-        location1 = features.append('text').attr('class', styles.locationName);
-        locations = [
-            features.append('text').attr('class', styles.locationNameSmall),
-            features.append('text').attr('class', styles.locationNameSmall),
-            features.append('text').attr('class', styles.locationNameSmall)
-        ];
+        locationLabel = features.append('g');
+        // .style('opacity', 0);
+
+        let balloonWidth = 300;
+        let locationLabelBalloon = locationLabel
+            .append('g')
+            .attr('fill', 'white')
+            .attr('transform', `translate(-${balloonWidth / 2}, -69)`);
+        locationLabelBalloon
+            .append('polygon')
+            .attr('points', '0,0 10,20, 20,0')
+            .attr('transform', `translate(${balloonWidth / 2 - 10}, 49)`);
+        locationLabelBalloon
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('rx', 3)
+            .attr('ry', 3)
+            .attr('width', 300)
+            .attr('height', 50);
+        locationLabelBalloon
+            .append('text')
+            .attr('font-size', 25)
+            .attr('fill', 'black')
+            .attr('x', 6)
+            .attr('y', 33)
+            .text('Sydney');
 
         this.zoomTo();
     }
@@ -165,33 +185,16 @@ class Map extends Preact.Component {
             );
         });
 
-        // Work out any other labels for electorates
-        let others = (marker.config.and || '')
-            .split('and')
-            .map(o => {
-                if (!o) return null;
-
-                // find each of the others in the data list
-                return data.find(
-                    datum =>
-                        datum.properties.name.toLowerCase() === o.toLowerCase()
-                );
-            })
-            .filter(m => m);
-
         if (d) {
-            this.zoomTo(marker, d, others);
+            this.zoomTo(marker, d);
         } else {
             this.zoomTo(marker);
         }
     }
 
-    zoomTo(marker, d, others) {
+    zoomTo(marker, d) {
         // Don't zoom again
         if (d && this.state.electorate === d) return;
-
-        // Show labels for other electorates in the area
-        others = others || [];
 
         let x;
         let y;
@@ -210,33 +213,22 @@ class Map extends Preact.Component {
                 k = 50; // Ok-ish zoom to a normal electorate level (based on Brisbane)
             }
 
-            location1
-                .text(
-                    d.properties.name +
-                        ' (' +
-                        (Math.round(d.properties.support * 100) + '%)')
-                )
-                .style('font-size', 35 / k + 'px')
-                .style('stroke-width', 1 / k + 'px')
-                .attr('dy', 0 - 30 / k + 'px')
-                .attr('x', d.x + 'px')
-                .attr('y', d.y + 'px');
-
-            // Show any other electorates that are nearby
-            locations.forEach(l => l.text(''));
-            others.forEach((other, index) => {
-                locations[index]
-                    .text(
-                        other.properties.name +
-                            ' (' +
-                            (Math.round(other.properties.support * 100) + '%)')
-                    )
-                    .style('font-size', 30 / k + 'px')
-                    .style('stroke-width', 1 / k + 'px')
-                    .attr('dy', 0 - 20 / k + 'px')
-                    .attr('x', other.x + 'px')
-                    .attr('y', other.y + 'px');
-            });
+            // Move the map pin and center the text
+            locationLabel
+                .attr('transform', `translate(${x}, ${y}) scale(${1 / k})`)
+                .style('opacity', 1);
+            var label = locationLabel.select('text');
+            label.text(
+                d.properties.name +
+                    ' (' +
+                    (Math.round(d.properties.support * 100) + '%)')
+            );
+            label.attr(
+                'x',
+                (locationLabel.node().getBBox().width -
+                    label.node().getBBox().width) /
+                    2
+            );
 
             electorate = d;
         } else {
@@ -244,18 +236,13 @@ class Map extends Preact.Component {
             y = height / 2;
             k = 0.8;
 
-            location1.text('');
-            locations.forEach(l => l.text(''));
+            locationLabel.style('opacity', 0);
 
             electorate = null;
         }
 
         // Highlight the new feature
-        features
-            .selectAll('path')
-            .transition()
-            .duration(1400)
-            .style('stroke-width', 1 / k + 'px'); // Keep the border width constant
+        features.selectAll('path').transition().duration(1400);
 
         features
             .transition()

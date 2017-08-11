@@ -5,7 +5,7 @@
 }
 
 .detail {
-    max-width: 60vw;
+    max-width: 650px;
     margin: auto;
     padding: 30px;
     background: rgba(0, 0, 0, 0.5);
@@ -13,5 +13,11 @@
         font-size: 22px;
         margin: 0;
         padding: 0;
+    }
+}
+
+@media only screen and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
+    .detail {
+        max-width: 95%;
     }
 }
