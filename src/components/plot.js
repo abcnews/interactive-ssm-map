@@ -78,7 +78,8 @@ class Plot extends Preact.Component {
                     {sortedData
                         .toList()
                         .map(datum => {
-                            const value = 100 * datum.get('value');
+                            const value =
+                                Math.floor(100 * datum.get('value')) + '%';
 
                             return (
                                 <div className={styles.row}>
@@ -88,12 +89,12 @@ class Plot extends Preact.Component {
                                     <div className={styles.support}>
                                         <div className={styles.bar}>
                                             <div
-                                                aria-label={value.toFixed(2)}
+                                                aria-label={value}
                                                 className={styles.barValue}
-                                                style={{ width: `${value}%` }}
+                                                style={{ width: value }}
                                             />
                                             <div className={styles.value}>
-                                                {Math.floor(value)}%
+                                                {value}
                                             </div>
                                         </div>
                                     </div>
