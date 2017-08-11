@@ -143,7 +143,6 @@ class Map extends Preact.Component {
             .style('fill', d => colours(d.properties.support));
 
         locationLabel = features.append('g');
-        // .style('opacity', 0);
 
         let balloonWidth = 300;
         let locationLabelBalloon = locationLabel
@@ -213,6 +212,10 @@ class Map extends Preact.Component {
                 k = 50; // Ok-ish zoom to a normal electorate level (based on Brisbane)
             }
 
+            if (width < 400) {
+                k = (k + k / 2) * 1.8;
+            }
+
             // Move the map pin and center the text
             locationLabel
                 .attr('transform', `translate(${x}, ${y}) scale(${1 / k})`)
@@ -232,9 +235,14 @@ class Map extends Preact.Component {
 
             electorate = d;
         } else {
-            x = width / 2;
+            x = width / 2 + 10; // just off actual center
             y = height / 2;
             k = 0.8;
+
+            // mobile width gets a different zoom
+            if (width < 400) {
+                k = 0.8 * 1.55;
+            }
 
             locationLabel.style('opacity', 0);
 

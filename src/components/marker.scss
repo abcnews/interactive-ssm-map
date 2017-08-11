@@ -8,6 +8,7 @@
     max-width: 650px;
     margin: auto;
     padding: 30px;
+    border-radius: 3px;
     background: rgba(0, 0, 0, 0.5);
     p {
         font-size: 22px;
@@ -19,5 +20,9 @@
 @media only screen and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
     .detail {
         max-width: 95%;
+
+        p {
+            font-size: 15px;
+        }
     }
 }

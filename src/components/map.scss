@@ -1,5 +1,5 @@
 path {
-    stroke-width: 0.02px;
+    stroke-width: 0.02;
     stroke: #333;
     fill: #999;
 }
@@ -26,4 +26,10 @@ path {
     font-size: 0.6px;
     font-weight: bold;
     text-anchor: middle;
+}
+
+@media only screen and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
+    path {
+        stroke-width: 0.005;
+    }
 }
