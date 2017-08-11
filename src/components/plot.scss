@@ -39,24 +39,38 @@
 .bar-value {
     background: #666;
     height: 10px;
+    display: inline-block;
+}
+
+.value {
+    font-size: 10px;
+    color: #333;
+    margin-left: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -2px;
 }
 
 .toolbar {
     width: 100%;
-    border-bottom: 1px solid #333;
     margin-bottom: 20px;
+    display: flex;
+    height: 3rem;
 
     button {
+        outline: none;
+        flex: 1 1 2.3125rem;
+        width: 2.3125rem;
+        background: #eee;
+        font-size: 14px;
+        font-weight: 700;
         border: none;
-        background: none;
-        color: #333;
         cursor: pointer;
-        text-transform: uppercase;
-        font-size: 16px;
-        padding: 8px 12px;
+        padding: 5px 10px;
+        margin: 0 2px;
 
         &.active-button {
-            background: #333;
+            background: #757575;
             color: white;
         }
     }
