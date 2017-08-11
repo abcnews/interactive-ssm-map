@@ -216,7 +216,7 @@ class Map extends Preact.Component {
             }
 
             if (width < 400) {
-                k = (k + k / 2) * 1.8;
+                k = k + k / 4;
             }
 
             // Move the map pin and center the text
