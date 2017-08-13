@@ -17,6 +17,7 @@ let features;
 let path;
 let centered;
 let locationLabel;
+let otherLabels;
 let circles;
 let simulation;
 let width;
@@ -30,18 +31,20 @@ class Map extends Preact.Component {
         super(props);
 
         this.electorate = null;
+        this.findElectorate = this.findElectorate.bind(this);
 
         this.onResize = this.onResize.bind(this);
 
         this.initMap = this.initMap.bind(this);
-        this.draw = this.draw.bind(this);
+        this.createLabel = this.createLabel.bind(this);
+        this.updateLabel = this.updateLabel.bind(this);
 
         this.zoomTo = this.zoomTo.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.marker !== nextProps.marker) {
-            this.draw(nextProps.marker);
+            this.zoomTo(nextProps.marker);
         }
     }
 
@@ -51,7 +54,6 @@ class Map extends Preact.Component {
 
     componentDidMount() {
         this.initMap();
-
         window.__ODYSSEY__.scheduler.subscribe(this.onResize);
     }
 
@@ -90,8 +92,16 @@ class Map extends Preact.Component {
 
             features.selectAll('path').attr('d', path);
 
-            this.draw(this.props.marker);
+            this.zoomTo(this.props.marker);
         }
+    }
+
+    findElectorate(name) {
+        if (!name) return false;
+
+        return data.find(datum => {
+            return datum.properties.name.toLowerCase() === name.toLowerCase();
+        });
     }
 
     initMap() {
@@ -144,10 +154,23 @@ class Map extends Preact.Component {
             .attr('d', path)
             .style('fill', d => colours(d.properties.support));
 
-        locationLabel = features.append('g');
+        otherLabels = [
+            this.createLabel(),
+            this.createLabel(),
+            this.createLabel(),
+            this.createLabel()
+        ];
+        locationLabel = this.createLabel();
+
+        // Zoom to Aus
+        this.zoomTo();
+    }
+
+    createLabel() {
+        const label = features.append('g');
 
         let balloonWidth = 280;
-        let locationLabelBalloon = locationLabel
+        let locationLabelBalloon = label
             .append('g')
             .attr('fill', 'black')
             .attr('transform', `translate(-${balloonWidth / 2}, -69)`);
@@ -169,32 +192,30 @@ class Map extends Preact.Component {
             .attr('fill', 'white')
             .attr('x', 6)
             .attr('y', 33)
-            .text('Sydney');
-
-        // Zoom to Aus
-        this.zoomTo();
+            .text('');
+        return label;
     }
 
-    // Draw the map
-    draw(marker) {
+    updateLabel(label, d, k) {
+        label
+            .attr('transform', `translate(${d.x}, ${d.y}) scale(${1 / k})`)
+            .style('opacity', 1);
+        var text = label.select('text');
+        text.text(
+            d.properties.name +
+                ' (' +
+                (Math.round(d.properties.support * 100) + '%)')
+        );
+        text.attr(
+            'x',
+            (label.node().getBBox().width - text.node().getBBox().width) / 2
+        );
+    }
+
+    zoomTo(marker) {
         // find the electorate
-        let d = data.find(datum => {
-            if (!marker.config.electorate) return false;
+        let d = this.findElectorate(marker && marker.config.electorate);
 
-            return (
-                datum.properties.name.toLowerCase() ===
-                marker.config.electorate.toLowerCase()
-            );
-        });
-
-        if (d) {
-            this.zoomTo(marker, d);
-        } else {
-            this.zoomTo(marker);
-        }
-    }
-
-    zoomTo(marker, d) {
         // Don't zoom again
         if (d && this.state.electorate === d) return;
 
@@ -220,21 +241,18 @@ class Map extends Preact.Component {
             }
 
             // Move the map pin and center the text
-            locationLabel
-                .attr('transform', `translate(${x}, ${y}) scale(${1 / k})`)
-                .style('opacity', 1);
-            var label = locationLabel.select('text');
-            label.text(
-                d.properties.name +
-                    ' (' +
-                    (Math.round(d.properties.support * 100) + '%)')
-            );
-            label.attr(
-                'x',
-                (locationLabel.node().getBBox().width -
-                    label.node().getBBox().width) /
-                    2
-            );
+            this.updateLabel(locationLabel, d, k);
+
+            // Find any other electorates
+            otherLabels.forEach(l => l.style('opacity', 0));
+            if (marker && marker.config.and) {
+                let others = marker.config.and.split('and');
+                others = others
+                    .map(this.findElectorate)
+                    .forEach((data, index) => {
+                        this.updateLabel(otherLabels[index], data, k * 1.5);
+                    });
+            }
 
             electorate = d;
         } else {
@@ -248,6 +266,7 @@ class Map extends Preact.Component {
             }
 
             locationLabel.style('opacity', 0);
+            otherLabels.forEach(l => l.style('opacity', 0));
 
             electorate = null;
         }
