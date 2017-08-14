@@ -14,6 +14,9 @@ const styles = require('./map.scss');
 
 let svg;
 let features;
+let mapX = 0;
+let mapY = 0;
+let mapZoom;
 let path;
 let centered;
 let locationLabel;
@@ -197,6 +200,9 @@ class Map extends Preact.Component {
     }
 
     updateLabel(label, d, k) {
+        // shrink the labels a bit
+        k = k * 1.1;
+
         label
             .attr('transform', `translate(${d.x}, ${d.y}) scale(${1 / k})`)
             .style('opacity', 1);
@@ -274,14 +280,45 @@ class Map extends Preact.Component {
         // Highlight the new feature
         features.selectAll('path').transition().duration(1400);
 
-        features
-            .transition()
-            .duration(1500)
-            .attr(
-                'transform',
-                `translate(${width / 2}, ${height /
-                    2}) scale(${k}) translate(${-x}, ${-y})`
-            );
+        // if the diff of the x and y are both huge then zoom out first
+        const diffX = Math.abs(x - mapX);
+        const diffY = Math.abs(y - mapY);
+        const diffZoom = Math.abs(k - mapZoom);
+        const isFarAway = diffX > 100 || diffY > 100;
+        if (diffY !== 0 && mapZoom >= 2 && k >= 2 && isFarAway) {
+            const middleX = Math.min(x, mapX) + diffX / 2;
+            const middleY = Math.min(y, mapY) + diffY / 2;
+            const middleZoom = Math.min(Math.min(mapZoom, k) / 2, 5);
+
+            features
+                .transition()
+                .duration(800)
+                .attr(
+                    'transform',
+                    `translate(${width / 2}, ${height /
+                        2}) scale(${middleZoom}) translate(${-x}, ${-y})`
+                )
+                .transition()
+                .duration(600)
+                .attr(
+                    'transform',
+                    `translate(${width / 2}, ${height /
+                        2}) scale(${k}) translate(${-x}, ${-y})`
+                );
+        } else {
+            features
+                .transition()
+                .duration(1000)
+                .attr(
+                    'transform',
+                    `translate(${width / 2}, ${height /
+                        2}) scale(${k}) translate(${-x}, ${-y})`
+                );
+        }
+
+        mapX = x;
+        mapY = y;
+        mapZoom = k;
 
         this.setState({ electorate });
     }
