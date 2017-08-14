@@ -28,8 +28,8 @@ const colours = [
 ];
 
 module.exports = () => {
-    let min = 0.2;
-    let max = 0.8;
+    let min = 0;
+    let max = 1;
 
     return Scale.scaleQuantize().domain([min, max]).range(colours);
 };
