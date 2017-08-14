@@ -256,7 +256,7 @@ class Map extends Preact.Component {
 
             // Find any other electorates
             otherLabels.forEach(l => l.style('opacity', 0));
-            if (marker && marker.config.and) {
+            if (width > 1050 && marker && marker.config.and) {
                 let others = marker.config.and.split('and');
                 others = others
                     .map(this.findElectorate)
