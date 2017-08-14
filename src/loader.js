@@ -1,14 +1,25 @@
 const { getSections, getMarkers } = window.__ODYSSEY__.utils.anchors;
 
 function alternatingCaseToObject(string) {
-    let o = {};
     const config = string.match(/[A-Z]+[0-9a-z]+/g);
 
     if (!config) return {};
 
+    let o = {};
+
     config.forEach(match => {
-        const [, key, value] = match.match(/([A-Z]+)([0-9a-z]+)/);
-        o[key.toLowerCase()] = value;
+        let [, key, value] = match.match(/([A-Z]+)([0-9a-z]+)/);
+        key = key.toLowerCase();
+
+        if (o[key]) {
+            // Key exists so treat it as a list
+            if (!(o[key] instanceof Array)) {
+                o[key] = [o[key]];
+            }
+            o[key].push(value);
+        } else {
+            o[key] = value;
+        }
     });
 
     return o;
