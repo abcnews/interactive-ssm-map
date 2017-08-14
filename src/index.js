@@ -1,8 +1,10 @@
 const Preact = require('preact');
 
-const element = document.querySelector(
+const root = document.querySelector(
     '[data-interactive-marriage-equality-root]'
 );
+
+const element = document.querySelector('[name="scrollyteller"]');
 
 // Fix the width/position for iPad
 element.className = element.className += ' u-full';
@@ -17,13 +19,13 @@ let chartRoot;
 let render = () => {
     let App = require('./components/app');
     mapRoot = Preact.render(
-        <App view="map" dataURL={element.getAttribute('data-data-url')} />,
+        <App view="map" dataURL={root.getAttribute('data-data-url')} />,
         element,
         mapRoot
     );
 
     chartRoot = Preact.render(
-        <App view="chart" dataURL={element.getAttribute('data-data-url')} />,
+        <App view="chart" dataURL={root.getAttribute('data-data-url')} />,
         chartElement,
         chartRoot
     );
