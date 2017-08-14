@@ -103,7 +103,10 @@ class Map extends Preact.Component {
         if (!name) return false;
 
         return data.find(datum => {
-            return datum.properties.name.toLowerCase() === name.toLowerCase();
+            return (
+                datum.properties.name.toLowerCase().replace(/[^a-z]/, '') ===
+                name.toLowerCase().replace(/[^a-z]/, '')
+            );
         });
     }
 
