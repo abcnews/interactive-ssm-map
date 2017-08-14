@@ -161,6 +161,12 @@ class Map extends Preact.Component {
             this.createLabel(),
             this.createLabel(),
             this.createLabel(),
+            this.createLabel(),
+            this.createLabel(),
+            this.createLabel(),
+            this.createLabel(),
+            this.createLabel(),
+            this.createLabel(),
             this.createLabel()
         ];
         locationLabel = this.createLabel();
@@ -200,8 +206,10 @@ class Map extends Preact.Component {
     }
 
     updateLabel(label, d, k) {
+        if (!d) return;
+
         // shrink the labels a bit
-        k = k * 1.1;
+        k = k * 1.3;
 
         label
             .attr('transform', `translate(${d.x}, ${d.y}) scale(${1 / k})`)
@@ -222,16 +230,13 @@ class Map extends Preact.Component {
         // find the electorate
         let d = this.findElectorate(marker && marker.config.electorate);
 
-        // Don't zoom again
-        if (d && this.state.electorate === d) return;
-
         let x;
         let y;
         let k;
 
         let electorate;
 
-        if (d && this.state.electorate !== d) {
+        if (d) {
             // Compute the new map center and scale to zoom to
             x = d.x;
             y = d.y;
@@ -276,6 +281,9 @@ class Map extends Preact.Component {
 
             electorate = null;
         }
+
+        // Don't zoom again
+        if (k === mapZoom && this.state.electorate === electorate) return;
 
         // Highlight the new feature
         features.selectAll('path').transition().duration(1400);
