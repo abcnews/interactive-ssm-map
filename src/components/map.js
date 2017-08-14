@@ -296,7 +296,15 @@ class Map extends Preact.Component {
         if (diffY !== 0 && mapZoom >= 2 && k >= 2 && isFarAway) {
             const middleX = Math.min(x, mapX) + diffX / 2;
             const middleY = Math.min(y, mapY) + diffY / 2;
-            const middleZoom = Math.min(Math.min(mapZoom, k) / 2, 5);
+
+            // Middle zoom is the same as the current zoom if it is bigger than the new zoom
+            let middleZoom;
+            // Bounce out a bit if the zooms are within 10% of each other
+            if (k > 5 && diffZoom < Math.max(mapZoom, k) / 2) {
+                middleZoom = Math.min(mapZoom / 2, 5);
+            } else {
+                middleZoom = Math.min(mapZoom, k);
+            }
 
             features
                 .transition()

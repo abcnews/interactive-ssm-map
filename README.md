@@ -3,11 +3,6 @@
 A project generated from [aunty](https://github.com/abcnews/aunty)'s `basic-story` template.
 
 
-## TODO
-
-* load at the actual scrollyteller section
-
-
 ## Hot Reload
 
 Hot reload is enabled by default on the development server. Your 'app' should be separated into the `src/index.js` loader
