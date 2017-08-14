@@ -4,6 +4,9 @@ const element = document.querySelector(
     '[data-interactive-marriage-equality-root]'
 );
 
+// Fix the width/position for iPad
+element.className = element.className += ' u-full';
+
 // Do some DOM magic to find a place to mount the chart
 const chartLocation = document.querySelector('[name="chart"]');
 const chartElement = document.createElement('div');
