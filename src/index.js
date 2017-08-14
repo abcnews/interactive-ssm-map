@@ -4,30 +4,29 @@ const root = document.querySelector(
     '[data-interactive-marriage-equality-root]'
 );
 
-const element = document.querySelector('[name="scrollyteller"]');
-
-// Fix the width/position for iPad
-element.className = element.className += ' u-full';
+// Do some DOM magic to find a place to mount the map
+const mapLocation = document.querySelector('[name="scrollyteller"]');
+const mapElement = document.createElement('div');
+mapElement.className = mapElement.className += ' u-full';
+mapLocation.parentNode.insertBefore(mapElement, mapLocation.nextSibling);
 
 // Do some DOM magic to find a place to mount the chart
 const chartLocation = document.querySelector('[name="chart"]');
 const chartElement = document.createElement('div');
 chartLocation.parentNode.insertBefore(chartElement, chartLocation.nextSibling);
 
-let mapRoot;
-let chartRoot;
 let render = () => {
     let App = require('./components/app');
-    mapRoot = Preact.render(
+    Preact.render(
         <App view="map" dataURL={root.getAttribute('data-data-url')} />,
-        element,
-        mapRoot
+        mapElement,
+        mapElement.lastChild
     );
 
-    chartRoot = Preact.render(
+    Preact.render(
         <App view="chart" dataURL={root.getAttribute('data-data-url')} />,
         chartElement,
-        chartRoot
+        chartElement.lastChild
     );
 };
 

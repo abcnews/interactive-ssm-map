@@ -20,7 +20,11 @@ function initSections(names) {
     getSections(names).forEach(section => {
         let html = '';
         section.betweenNodes.forEach(node => {
-            if (node.style && node.outerHTML) {
+            if (
+                node.style &&
+                node.outerHTML &&
+                node.className.indexOf('full') < 0
+            ) {
                 node.style.setProperty('display', '');
                 html += node.outerHTML;
                 node.style.setProperty('display', 'none');

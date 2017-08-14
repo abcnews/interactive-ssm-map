@@ -66,9 +66,7 @@ class Scrolly extends Preact.Component {
         if (!this.props.data) return null;
 
         return (
-            <div
-                ref={el => (this.wrapper = el)}
-                className={'u-full ' + styles.wrapper}>
+            <div ref={el => (this.wrapper = el)} className={styles.wrapper}>
                 <Background
                     data={this.props.data}
                     marker={this.state.currentMarker}
