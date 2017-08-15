@@ -24,6 +24,7 @@
         "prettier": "^1.5.3"
     },
     "dependencies": {
+        "array-from": "^2.1.1",
         "csv-loader": "^2.1.1",
         "d3-force": "^1.0.6",
         "d3-geo": "^1.6.4",

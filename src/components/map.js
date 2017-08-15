@@ -7,6 +7,7 @@ const TopoJSON = require('topojson');
 const ranger = require('power-ranger');
 const Geo = require('d3-geo');
 const scale = require('../data/colour-scale');
+const arrayFrom = require('array-from');
 
 const mapJSON = require('../data/map.quantized.json');
 
@@ -260,7 +261,7 @@ class Map extends Preact.Component {
             // Find any other electorates
             otherLabels.forEach(l => l.style('opacity', 0));
             if (width > 1050 && marker && marker.config.and) {
-                let others = marker.config.and
+                let others = arrayFrom(marker.config.and)
                     .map(this.findElectorate)
                     .forEach((data, index) => {
                         this.updateLabel(otherLabels[index], data, k * 1.5);

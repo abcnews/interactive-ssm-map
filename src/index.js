@@ -40,7 +40,11 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
         } catch (e) {
             // Render the error to the screen in place of the actual app
             const ErrorBox = require('./error-box');
-            mapRoot = Preact.render(<ErrorBox error={e} />, element, mapRoot);
+            Preact.render(
+                <ErrorBox error={e} />,
+                mapElement,
+                mapElement.firstChild
+            );
         }
     };
 
