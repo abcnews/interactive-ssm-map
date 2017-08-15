@@ -79,7 +79,7 @@ class Plot extends Preact.Component {
                         .toList()
                         .map(datum => {
                             const value =
-                                Math.floor(100 * datum.get('value')) + '%';
+                                Math.round(100 * datum.get('value')) + '%';
 
                             return (
                                 <div className={styles.row}>
