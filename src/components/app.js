@@ -4,7 +4,6 @@ require('isomorphic-fetch');
 const Preact = require('preact');
 const Immutable = require('immutable');
 
-const { initSections } = require('../loader');
 const Scrolly = require('./scrolly');
 const Plot = require('./plot');
 const Html = require('./html');
@@ -14,7 +13,6 @@ class App extends Preact.Component {
         super(props);
 
         this.state = {
-            sections: initSections(['scrollyteller']),
             data: null
         };
     }
@@ -38,12 +36,12 @@ class App extends Preact.Component {
     }
 
     render() {
-        switch (this.props.view) {
-            default:
-            case 'map':
-                return <Scrolly data={this.state.data} />;
-            case 'chart':
-                return <Plot data={this.state.data} />;
+        if (this.props.section) {
+            return (
+                <Scrolly section={this.props.section} data={this.state.data} />
+            );
+        } else {
+            return <Plot data={this.state.data} />;
         }
     }
 }

@@ -13,7 +13,7 @@ class Scrolly extends Preact.Component {
         this.onScroll = this.onScroll.bind(this);
 
         this.state = {
-            markers: initMarkers('mark', 'scrollyteller'),
+            markers: initMarkers(props.section, 'mark'),
             currentMarker: null,
             isBackgroundFixed: false
         };
