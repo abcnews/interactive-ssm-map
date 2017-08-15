@@ -5,31 +5,37 @@ const root = document.querySelector(
     '[data-interactive-marriage-equality-root]'
 );
 
-// Add a mount point to each of the scrollytellers
-const scrollytellers = __ODYSSEY__.utils.anchors
-    .getSections('scrollyteller')
-    .map(section => {
-        section.mountNode = document.createElement('div');
-        section.mountNode.className = 'u-full';
-        section.startNode.parentNode.insertBefore(
-            section.mountNode,
-            section.startNode
-        );
+// Add a mount point to each of the sections
+let scrollytellers;
+let charts;
+const init = () => {
+    scrollytellers = window.__ODYSSEY__.utils.anchors
+        .getSections('scrollyteller')
+        .map(section => {
+            section.mountNode = document.createElement('div');
+            section.mountNode.className = 'u-full';
+            section.startNode.parentNode.insertBefore(
+                section.mountNode,
+                section.startNode
+            );
 
-        return section;
+            return section;
+        });
+
+    // Add a mount point to each of the charts
+    charts = arrayFrom(
+        document.querySelectorAll('[name="chart"]')
+    ).map(node => {
+        node.mountNode = document.createElement('div');
+        node.parentNode.insertBefore(node.mountNode, node);
+
+        return node;
     });
 
-// Add a mount point to each of the charts
-const charts = arrayFrom(
-    document.querySelectorAll('[name="chart"]')
-).map(node => {
-    node.mountNode = document.createElement('div');
-    node.parentNode.insertBefore(node.mountNode, node);
+    renderAll();
+};
 
-    return node;
-});
-
-const init = () => {
+const renderAll = () => {
     scrollytellers.forEach(section => render(section.mountNode, section));
     charts.forEach(chart => render(chart.mountNode));
 };
@@ -59,7 +65,7 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
 
     // If a new app build is detected try rendering it
     module.hot.accept('./components/app', () => {
-        setTimeout(init);
+        setTimeout(renderAll);
     });
 }
 
