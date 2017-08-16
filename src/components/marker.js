@@ -1,22 +1,43 @@
 const Preact = require('preact');
-const HTML = require('./html');
 
 const styles = require('./marker.scss');
 
 class Marker extends Preact.Component {
+    constructor(props) {
+        super(props);
+
+        this.ref = this.ref.bind(this);
+    }
+
+    shouldComponentUpdate() {
+        return false;
+    }
+
+    componentWillUnmount() {
+        this.element.removeChild(this.props.marker.node);
+    }
+
     render() {
-        const { marker } = this.props;
+        const { reference, marker, className } = this.props;
 
         return (
             <div
-                ref={this.props.reference}
-                className={`${styles.wrapper} ${this.props.className || ''}`}>
-                <HTML
-                    html={marker.html}
+                ref={reference}
+                className={`${styles.wrapper} ${className || ''}`}>
+                <div
                     className={`u-richtext-invert ${styles.detail}`}
+                    ref={this.ref}
                 />
             </div>
         );
+    }
+
+    ref(element) {
+        if (!element) return;
+        if (!this.props.marker.node) return;
+
+        this.element = element;
+        this.element.appendChild(this.props.marker.node);
     }
 }
 

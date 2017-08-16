@@ -1,49 +1,19 @@
 const Preact = require('preact');
-const arrayFrom = require('array-from');
+const { getData, getScrollytellers, getCharts } = require('./loader');
 
-const root = document.querySelector(
-    '[data-interactive-marriage-equality-root]'
-);
-
-// Add a mount point to each of the sections
-let scrollytellers;
-let charts;
 const init = () => {
-    scrollytellers = window.__ODYSSEY__.utils.anchors
-        .getSections('scrollyteller')
-        .map(section => {
-            section.mountNode = document.createElement('div');
-            section.mountNode.className = 'u-full';
-            section.startNode.parentNode.insertBefore(
-                section.mountNode,
-                section.startNode
-            );
-
-            return section;
-        });
-
-    // Add a mount point to each of the charts
-    charts = arrayFrom(
-        document.querySelectorAll('[name="chart"]')
-    ).map(node => {
-        node.mountNode = document.createElement('div');
-        node.parentNode.insertBefore(node.mountNode, node);
-
-        return node;
+    getData().then(data => {
+        getScrollytellers().forEach(section =>
+            render(section.mountNode, data, section)
+        );
+        getCharts().forEach(chart => render(chart.mountNode, data));
     });
-
-    renderAll();
 };
 
-const renderAll = () => {
-    scrollytellers.forEach(section => render(section.mountNode, section));
-    charts.forEach(chart => render(chart.mountNode));
-};
-
-let render = (element, section) => {
+let render = (element, data, section) => {
     let App = require('./components/app');
     Preact.render(
-        <App section={section} dataURL={root.getAttribute('data-data-url')} />,
+        <App section={section} data={data} />,
         element,
         element.lastChild
     );
@@ -53,9 +23,9 @@ let render = (element, section) => {
 if (process.env.NODE_ENV !== 'production' && module.hot) {
     // Wrap the actual renderer in an error trap
     let renderFunction = render;
-    render = (element, section) => {
+    render = (element, data, section) => {
         try {
-            renderFunction(element, section);
+            renderFunction(element, data, section);
         } catch (e) {
             // Render the error to the screen in place of the actual app
             const ErrorBox = require('./error-box');
@@ -65,7 +35,7 @@ if (process.env.NODE_ENV !== 'production' && module.hot) {
 
     // If a new app build is detected try rendering it
     module.hot.accept('./components/app', () => {
-        setTimeout(renderAll);
+        setTimeout(init);
     });
 }
 
