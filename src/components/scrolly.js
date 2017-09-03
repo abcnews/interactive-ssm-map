@@ -72,14 +72,24 @@ class Scrolly extends Preact.Component {
                     marker={this.state.currentMarker}
                     attachment={this.state.backgroundAttachment}
                 />
-                {this.state.markers.map((marker, index) =>
-                    <Marker
-                        marker={marker}
-                        reference={el => (marker.element = el)}
-                        isCurrentMarker={this.state.currentMarker === marker}
-                        className={index === 0 ? styles.firstMarker : ''}
-                    />
-                )}
+                {this.state.markers.map((marker, index) => {
+                    let markerClass = '';
+
+                    if (index === 0) markerClass = styles.firstMarker;
+                    if (index === this.state.markers.length - 1)
+                        markerClass = styles.lastMarker;
+
+                    return (
+                        <Marker
+                            marker={marker}
+                            reference={el => (marker.element = el)}
+                            isCurrentMarker={
+                                this.state.currentMarker === marker
+                            }
+                            className={markerClass}
+                        />
+                    );
+                })}
             </div>
         );
     }

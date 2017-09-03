@@ -16,8 +16,9 @@ function getData() {
             text.split('\n').slice(1).forEach(row => {
                 row = row.split(',');
                 if (row.length === 2) {
-                    data[row[0].toUpperCase()] = {
-                        name: row[0],
+                    const name = row[0].replace(/\"/g, '');
+                    data[name.toUpperCase()] = {
+                        name: name,
                         value: parseFloat(row[1])
                     };
                 }

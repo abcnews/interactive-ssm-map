@@ -18,7 +18,7 @@ class Marker extends Preact.Component {
     }
 
     render() {
-        const { reference, marker, className } = this.props;
+        const { reference, className } = this.props;
 
         return (
             <div
