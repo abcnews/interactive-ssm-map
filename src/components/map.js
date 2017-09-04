@@ -159,7 +159,13 @@ class Map extends Preact.Component {
             .enter()
             .append('path')
             .attr('d', path)
-            .style('fill', d => colours(d.properties.support));
+            .style('fill', d => colours(d.properties.support))
+            .on('click', d => {
+                this.zoomTo(
+                    { config: { electorate: d.properties.name } },
+                    true
+                );
+            });
 
         otherLabels = [
             this.createLabel(),
@@ -230,7 +236,7 @@ class Map extends Preact.Component {
         );
     }
 
-    zoomTo(marker) {
+    zoomTo(marker, wasClicked) {
         // find the electorate
         let d = this.findElectorate(marker && marker.config.electorate);
 
@@ -247,6 +253,17 @@ class Map extends Preact.Component {
 
             if (marker && marker.config.zoom) {
                 k = parseInt(marker.config.zoom, 10);
+            } else if (wasClicked) {
+                // Detect zoom level for whole of electorate
+                var centroid = path.centroid(d);
+                var b = path.bounds(d);
+                k =
+                    0.8 /
+                    Math.max(
+                        (b[1][0] - b[0][0]) / width,
+                        (b[1][1] - b[0][1]) / height
+                    );
+                k = Math.min(50, k);
             } else {
                 k = 50; // Ok-ish zoom to a normal electorate level (based on Brisbane)
             }
