@@ -5,28 +5,31 @@ const arrayFrom = require('array-from');
 const Immutable = require('immutable');
 
 function getData() {
-    const root = document.querySelector(
-        '[data-interactive-marriage-equality-root]'
-    );
+    const root = document.querySelector('[data-interactive-marriage-equality-root]');
 
-    return fetch(root.getAttribute('data-data-url'))
+    function parseCSV(text) {
+        let data = {};
+        text.split('\n').slice(1).forEach(row => {
+            row = row.split(',');
+            if (row.length === 2) {
+                const name = row[0].replace(/\"/g, '');
+                data[name.toUpperCase()] = {
+                    name: name,
+                    value: parseFloat(row[1])
+                };
+            }
+        });
+        return Immutable.fromJS(data);
+    }
+
+    return fetch(root.getAttribute('data-data-url'), {
+        credentials: 'same-origin'
+    })
         .then(r => r.text())
-        .then(text => {
-            let data = {};
-            text.split('\n').slice(1).forEach(row => {
-                row = row.split(',');
-                if (row.length === 2) {
-                    const name = row[0].replace(/\"/g, '');
-                    data[name.toUpperCase()] = {
-                        name: name,
-                        value: parseFloat(row[1])
-                    };
-                }
-            });
-            return Immutable.fromJS(data);
-        })
+        .then(text => parseCSV(text))
         .catch(error => {
             console.error(error);
+            return parseCSV(require('./data/fallback-data.csv.js'));
         });
 }
 
@@ -34,20 +37,15 @@ function getData() {
 let scrollytellers;
 function getScrollytellers() {
     if (!scrollytellers) {
-        scrollytellers = window.__ODYSSEY__.utils.anchors
-            .getSections('scrollyteller')
-            .map(section => {
-                section.mountNode = document.createElement('div');
-                section.mountNode.className = 'u-full';
-                section.startNode.parentNode.insertBefore(
-                    section.mountNode,
-                    section.startNode
-                );
+        scrollytellers = window.__ODYSSEY__.utils.anchors.getSections('scrollyteller').map(section => {
+            section.mountNode = document.createElement('div');
+            section.mountNode.className = 'u-full';
+            section.startNode.parentNode.insertBefore(section.mountNode, section.startNode);
 
-                section.markers = initMarkers(section, 'mark');
+            section.markers = initMarkers(section, 'mark');
 
-                return section;
-            });
+            return section;
+        });
     }
     return scrollytellers;
 }
@@ -55,9 +53,7 @@ function getScrollytellers() {
 let charts;
 function getCharts() {
     if (!charts) {
-        charts = arrayFrom(
-            document.querySelectorAll('[name="chart"]')
-        ).map(node => {
+        charts = arrayFrom(document.querySelectorAll('[name="chart"]')).map(node => {
             node.mountNode = document.createElement('div');
             node.parentNode.insertBefore(node.mountNode, node);
 
@@ -74,14 +70,8 @@ function initMarkers(section, name) {
     let config = {};
 
     section.betweenNodes.forEach(node => {
-        if (
-            node.tagName === 'A' &&
-            node.getAttribute('name') &&
-            node.getAttribute('name').indexOf(name) === 0
-        ) {
-            config = alternatingCaseToObject(
-                node.getAttribute('name').replace(new RegExp(`^${name}`), '')
-            );
+        if (node.tagName === 'A' && node.getAttribute('name') && node.getAttribute('name').indexOf(name) === 0) {
+            config = alternatingCaseToObject(node.getAttribute('name').replace(new RegExp(`^${name}`), ''));
         }
 
         if (node.tagName === 'P') {
