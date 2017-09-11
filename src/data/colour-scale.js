@@ -1,19 +1,19 @@
 const Scale = require('d3-scale');
 
 const colours = [
-    '#e86b2b',
-    '#f2844f',
-    '#f99d70',
-    '#feb593',
-    '#ffcfb7',
-    '#ffe7dc',
-    '#ffffff',
-    '#e1eff7',
-    '#c2e0ef',
-    '#a2d0e7',
-    '#7fc1df',
+    '#00a3cf',
     '#56b2d7',
-    '#00a3cf'
+    '#7fc1df',
+    '#a2d0e7',
+    '#c2e0ef',
+    '#e1eff7',
+    '#ffffff',
+    '#ffe7dc',
+    '#ffcfb7',
+    '#feb593',
+    '#f99d70',
+    '#f2844f',
+    '#e86b2b'
 ];
 
 module.exports = () => {
