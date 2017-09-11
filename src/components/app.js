@@ -1,9 +1,9 @@
-const Preact = require('preact');
+const { Component, h } = require('preact');
 
 const Scrolly = require('./scrolly');
 const Plot = require('./plot');
 
-class App extends Preact.Component {
+class App extends Component {
     render() {
         const { data, section } = this.props;
 

@@ -1,10 +1,10 @@
-const Preact = require('preact');
+const { Component, h } = require('preact');
 const Immutable = require('immutable');
 const scale = require('../data/colour-scale');
 
 const styles = require('./plot.scss');
 
-class Plot extends Preact.Component {
+class Plot extends Component {
     constructor(props) {
         super(props);
 
@@ -41,29 +41,17 @@ class Plot extends Preact.Component {
                 <div className={styles.toolbar}>
                     <button
                         onClick={e => this.setState({ sortBy: null })}
-                        className={
-                            this.state.sortBy === null
-                                ? styles.activeButton
-                                : ''
-                        }>
+                        className={this.state.sortBy === null ? styles.activeButton : ''}>
                         A-Z
                     </button>
                     <button
                         onClick={e => this.setState({ sortBy: 'asc' })}
-                        className={
-                            this.state.sortBy === 'asc'
-                                ? styles.activeButton
-                                : ''
-                        }>
+                        className={this.state.sortBy === 'asc' ? styles.activeButton : ''}>
                         Low-High
                     </button>
                     <button
                         onClick={e => this.setState({ sortBy: 'desc' })}
-                        className={
-                            this.state.sortBy === 'desc'
-                                ? styles.activeButton
-                                : ''
-                        }>
+                        className={this.state.sortBy === 'desc' ? styles.activeButton : ''}>
                         High-Low
                     </button>
                 </div>
@@ -71,15 +59,12 @@ class Plot extends Preact.Component {
                 <div className={styles.table}>
                     <div className={styles.row}>
                         <div className={styles.name} />
-                        <div className={`${styles.support} ${styles.guide}`}>
-                            50%
-                        </div>
+                        <div className={`${styles.support} ${styles.guide}`}>50%</div>
                     </div>
                     {sortedData
                         .toList()
                         .map(datum => {
-                            const value =
-                                Math.round(100 * datum.get('value')) + '%';
+                            const value = Math.round(100 * datum.get('value')) + '%';
 
                             return (
                                 <div className={styles.row}>

@@ -1,8 +1,8 @@
-const Preact = require('preact');
+const { Component, h } = require('preact');
 
 const styles = require('./marker.scss');
 
-class Marker extends Preact.Component {
+class Marker extends Component {
     constructor(props) {
         super(props);
 
@@ -21,13 +21,8 @@ class Marker extends Preact.Component {
         const { reference, className } = this.props;
 
         return (
-            <div
-                ref={reference}
-                className={`${styles.wrapper} ${className || ''}`}>
-                <div
-                    className={`u-richtext-invert ${styles.detail}`}
-                    ref={this.ref}
-                />
+            <div ref={reference} className={`${styles.wrapper} ${className || ''}`}>
+                <div className={`u-richtext-invert ${styles.detail}`} ref={this.ref} />
             </div>
         );
     }

@@ -1,4 +1,4 @@
-const Preact = require('preact');
+const { Component, h } = require('preact');
 
 const { initMarkers } = require('../loader');
 const Marker = require('./marker');
@@ -6,7 +6,7 @@ const Background = require('./background');
 
 const styles = require('./scrolly.scss');
 
-class Scrolly extends Preact.Component {
+class Scrolly extends Component {
     constructor(props) {
         super(props);
 
@@ -31,10 +31,7 @@ class Scrolly extends Preact.Component {
         // Work out which marker is the current one
         const fold = view.height * 0.4;
         const pastMarkers = this.state.markers.filter(marker => {
-            return (
-                marker.element &&
-                marker.element.getBoundingClientRect().top < fold
-            );
+            return marker.element && marker.element.getBoundingClientRect().top < fold;
         });
 
         let lastSeenMarker = pastMarkers[pastMarkers.length - 1];
@@ -76,16 +73,13 @@ class Scrolly extends Preact.Component {
                     let markerClass = '';
 
                     if (index === 0) markerClass = styles.firstMarker;
-                    if (index === this.state.markers.length - 1)
-                        markerClass = styles.lastMarker;
+                    if (index === this.state.markers.length - 1) markerClass = styles.lastMarker;
 
                     return (
                         <Marker
                             marker={marker}
                             reference={el => (marker.element = el)}
-                            isCurrentMarker={
-                                this.state.currentMarker === marker
-                            }
+                            isCurrentMarker={this.state.currentMarker === marker}
                             className={markerClass}
                         />
                     );

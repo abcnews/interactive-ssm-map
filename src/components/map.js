@@ -1,4 +1,4 @@
-const Preact = require('preact');
+const { Component, h } = require('preact');
 const values = require('object-values');
 const d3 = require('d3-selection');
 const force = require('d3-force');
@@ -30,7 +30,7 @@ let projection;
 let data;
 const margin = 10;
 
-class Map extends Preact.Component {
+class Map extends Component {
     constructor(props) {
         super(props);
 
@@ -74,18 +74,12 @@ class Map extends Preact.Component {
             width = viewport.width;
             height = viewport.height;
 
-            projection = Geo.geoMercator()
-                .scale(width * 0.9)
-                .center([131, -27])
-                .translate([width / 2, height / 2]);
+            projection = Geo.geoMercator().scale(width * 0.9).center([131, -27]).translate([width / 2, height / 2]);
 
             path = Geo.geoPath().projection(projection);
 
             data.forEach(f => {
-                f.properties.support = this.props.data.getIn([
-                    f.properties.elect_div.toUpperCase(),
-                    'value'
-                ]);
+                f.properties.support = this.props.data.getIn([f.properties.elect_div.toUpperCase(), 'value']);
                 f.properties.name = f.properties.elect_div;
 
                 f.x = path.centroid(f)[0];
@@ -105,8 +99,7 @@ class Map extends Preact.Component {
 
         return data.find(datum => {
             return (
-                datum.properties.name.toLowerCase().replace(/[^a-z]/, '') ===
-                name.toLowerCase().replace(/[^a-z]/, '')
+                datum.properties.name.toLowerCase().replace(/[^a-z]/, '') === name.toLowerCase().replace(/[^a-z]/, '')
             );
         });
     }
@@ -119,22 +112,13 @@ class Map extends Preact.Component {
         width = window.innerWidth;
         height = window.innerHeight;
 
-        projection = Geo.geoMercator()
-            .scale(width * 0.9)
-            .center([131, -27])
-            .translate([width / 2, height / 2]);
+        projection = Geo.geoMercator().scale(width * 0.9).center([131, -27]).translate([width / 2, height / 2]);
 
         path = Geo.geoPath().projection(projection);
 
         // Graft the support onto the map data
-        data = TopoJSON.feature(
-            mapJSON,
-            mapJSON.objects.map
-        ).features.map(f => {
-            f.properties.support = this.props.data.getIn([
-                f.properties.elect_div.toUpperCase(),
-                'value'
-            ]);
+        data = TopoJSON.feature(mapJSON, mapJSON.objects.map).features.map(f => {
+            f.properties.support = this.props.data.getIn([f.properties.elect_div.toUpperCase(), 'value']);
             f.properties.name = f.properties.elect_div;
 
             f.x = path.centroid(f)[0];
@@ -143,11 +127,7 @@ class Map extends Preact.Component {
             return f;
         });
 
-        svg = d3
-            .select(this.wrapper)
-            .append('svg')
-            .attr('width', width)
-            .attr('height', height);
+        svg = d3.select(this.wrapper).append('svg').attr('width', width).attr('height', height);
 
         features = svg.append('g').attr('class', styles.features);
 
@@ -161,10 +141,7 @@ class Map extends Preact.Component {
             .attr('d', path)
             .style('fill', d => colours(d.properties.support))
             .on('click', d => {
-                this.zoomTo(
-                    { config: { electorate: d.properties.name } },
-                    true
-                );
+                this.zoomTo({ config: { electorate: d.properties.name } }, true);
             });
 
         otherLabels = [
@@ -221,19 +198,10 @@ class Map extends Preact.Component {
         // shrink the labels a bit
         k = k * 1.3;
 
-        label
-            .attr('transform', `translate(${d.x}, ${d.y}) scale(${1 / k})`)
-            .style('opacity', 1);
+        label.attr('transform', `translate(${d.x}, ${d.y}) scale(${1 / k})`).style('opacity', 1);
         var text = label.select('text');
-        text.text(
-            d.properties.name +
-                ' (' +
-                (Math.round(d.properties.support * 100) + '%)')
-        );
-        text.attr(
-            'x',
-            (label.node().getBBox().width - text.node().getBBox().width) / 2
-        );
+        text.text(d.properties.name + ' (' + (Math.round(d.properties.support * 100) + '%)'));
+        text.attr('x', (label.node().getBBox().width - text.node().getBBox().width) / 2);
     }
 
     zoomTo(marker, wasClicked) {
@@ -257,12 +225,7 @@ class Map extends Preact.Component {
                 // Detect zoom level for whole of electorate
                 var centroid = path.centroid(d);
                 var b = path.bounds(d);
-                k =
-                    0.8 /
-                    Math.max(
-                        (b[1][0] - b[0][0]) / width,
-                        (b[1][1] - b[0][1]) / height
-                    );
+                k = 0.8 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height);
                 k = Math.min(50, k);
             } else {
                 k = 50; // Ok-ish zoom to a normal electorate level (based on Brisbane)
@@ -278,11 +241,9 @@ class Map extends Preact.Component {
             // Find any other electorates
             otherLabels.forEach(l => l.style('opacity', 0));
             if (width > 1050 && marker && marker.config.and) {
-                let others = arrayFrom(marker.config.and)
-                    .map(this.findElectorate)
-                    .forEach((data, index) => {
-                        this.updateLabel(otherLabels[index], data, k * 1.5);
-                    });
+                let others = arrayFrom(marker.config.and).map(this.findElectorate).forEach((data, index) => {
+                    this.updateLabel(otherLabels[index], data, k * 1.5);
+                });
             }
 
             electorate = d;
@@ -331,25 +292,16 @@ class Map extends Preact.Component {
                 .duration(800)
                 .attr(
                     'transform',
-                    `translate(${width / 2}, ${height /
-                        2}) scale(${middleZoom}) translate(${-x}, ${-y})`
+                    `translate(${width / 2}, ${height / 2}) scale(${middleZoom}) translate(${-x}, ${-y})`
                 )
                 .transition()
                 .duration(600)
-                .attr(
-                    'transform',
-                    `translate(${width / 2}, ${height /
-                        2}) scale(${k}) translate(${-x}, ${-y})`
-                );
+                .attr('transform', `translate(${width / 2}, ${height / 2}) scale(${k}) translate(${-x}, ${-y})`);
         } else {
             features
                 .transition()
                 .duration(1000)
-                .attr(
-                    'transform',
-                    `translate(${width / 2}, ${height /
-                        2}) scale(${k}) translate(${-x}, ${-y})`
-                );
+                .attr('transform', `translate(${width / 2}, ${height / 2}) scale(${k}) translate(${-x}, ${-y})`);
         }
 
         mapX = x;
