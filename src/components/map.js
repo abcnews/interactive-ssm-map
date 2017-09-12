@@ -178,6 +178,7 @@ class Map extends Component {
         let locationLabelBalloon = label
             .append('g')
             .attr('fill', 'black')
+            .style('pointer-events', 'none')
             .attr('transform', `translate(-${balloonWidth / 2}, -69)`);
         locationLabelBalloon
             .append('polygon')
@@ -229,6 +230,10 @@ class Map extends Component {
             case 'parkes':
                 bounds = path.bounds(d);
                 x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.7;
+                break;
+            case 'fenner':
+                bounds = path.bounds(d);
+                x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.1;
                 break;
             default:
             // nothing
