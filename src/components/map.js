@@ -226,14 +226,22 @@ class Map extends Component {
                 x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.8;
                 y = bounds[0][1] + (bounds[1][1] - bounds[0][1]) * 0.5;
                 break;
+            case 'parkes':
+                bounds = path.bounds(d);
+                x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.7;
+                break;
             default:
             // nothing
         }
 
         label.attr('transform', `translate(${x}, ${y}) scale(${1 / k})`).style('opacity', 1);
         var text = label.select('text');
-        text.text(d.properties.name + ' (' + (Math.round(d.properties.support * 100) + '%)'));
-        text.attr('x', (label.node().getBBox().width - text.node().getBBox().width) / 2);
+
+        const updatedText = d.properties.name + ' (' + (Math.round(d.properties.support * 100) + '%)');
+        if (updatedText !== text.text()) {
+            text.text(d.properties.name + ' (' + (Math.round(d.properties.support * 100) + '%)'));
+            text.attr('x', (label.node().getBBox().width - text.node().getBBox().width) / 2);
+        }
     }
 
     zoomTo(marker, wasClicked) {
@@ -247,9 +255,54 @@ class Map extends Component {
         let electorate;
 
         if (d) {
+            let renderMain = true;
+            let others = [];
+            let renderOthers = true;
+
+            // Find any other electorates
+            otherLabels.forEach(l => l.style('opacity', 0));
+            if (marker && marker.config.and) {
+                others = [].concat(marker.config.and).map(this.findElectorate);
+
+                // Mobile tweaks
+                if (width < 400) {
+                    const name = marker.config.electorate.toLowerCase();
+                    // Sydney and Chiffley -> hide chiffley
+                    if (name === 'sydney' && others[0].properties.name.toLowerCase() === 'chifley') {
+                        renderOthers = false;
+                    } else if (name === 'griffith') {
+                        renderMain = false;
+                        renderOthers = false;
+                    } else if (name == 'maranoa') {
+                        renderOthers = false;
+                    }
+                } else if (width < 1000) {
+                    if (name === 'griffith') {
+                        renderMain = false;
+                        renderOthers = false;
+                    }
+                }
+            }
+
             // Compute the new map center and scale to zoom to
-            x = d.x;
-            y = d.y;
+            if (others.length == 0) {
+                x = d.x;
+                y = d.y;
+            } else {
+                let minX = 999999;
+                let maxX = 0;
+                let minY = 999999;
+                let maxY = 0;
+                [d].concat(others).forEach(data => {
+                    minX = Math.min(minX, data.x);
+                    maxX = Math.max(maxX, data.x);
+                    minY = Math.min(minY, data.y);
+                    maxY = Math.max(maxY, data.y);
+                });
+
+                x = minX + (maxX - minX) / 2;
+                y = minY + (maxY - minY) / 2;
+            }
 
             if (marker && marker.config.zoom) {
                 k = parseInt(marker.config.zoom, 10);
@@ -263,6 +316,7 @@ class Map extends Component {
                 k = 50; // Ok-ish zoom to a normal electorate level (based on Brisbane)
             }
 
+            // Zoom in a bit on mobile
             if (width < 400) {
                 k = k + k / 4;
             }
@@ -270,17 +324,19 @@ class Map extends Component {
             // Move the map pin and center the text
             this.updateLabel(locationLabel, d, k);
 
-            // Find any other electorates
-            otherLabels.forEach(l => l.style('opacity', 0));
+            // Hide the main maker if need be
+            if ((marker && marker.config.hide) || renderMain === false) {
+                locationLabel.style('opacity', 0);
+            } else {
+                locationLabel.style('opacity', 1);
+            }
+
             let names = [];
-            if (marker && marker.config.and) {
-                let others = []
-                    .concat(marker.config.and)
-                    .map(this.findElectorate)
-                    .forEach((data, index) => {
-                        if (data) names.push(data.properties.name);
-                        this.updateLabel(otherLabels[index], data, k);
-                    });
+            if (renderOthers) {
+                others = others.forEach((data, index) => {
+                    if (data) names.push(data.properties.name);
+                    this.updateLabel(otherLabels[index], data, k);
+                });
             }
 
             // Bring the current electorates to the front
