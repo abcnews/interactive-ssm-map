@@ -207,7 +207,30 @@ class Map extends Component {
         // shrink the labels a bit
         k = k * 1.3;
 
-        label.attr('transform', `translate(${d.x}, ${d.y}) scale(${1 / k})`).style('opacity', 1);
+        let x = d.x;
+        let y = d.y;
+
+        let bounds;
+        switch (d.properties.name.toLowerCase()) {
+            case 'bowman':
+                bounds = path.bounds(d);
+                x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.2;
+                break;
+            case 'bonner':
+                bounds = path.bounds(d);
+                x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.2;
+                y = bounds[0][1] + (bounds[1][1] - bounds[0][1]) * 0.8;
+                break;
+            case 'mayo':
+                bounds = path.bounds(d);
+                x = bounds[0][0] + (bounds[1][0] - bounds[0][0]) * 0.8;
+                y = bounds[0][1] + (bounds[1][1] - bounds[0][1]) * 0.5;
+                break;
+            default:
+            // nothing
+        }
+
+        label.attr('transform', `translate(${x}, ${y}) scale(${1 / k})`).style('opacity', 1);
         var text = label.select('text');
         text.text(d.properties.name + ' (' + (Math.round(d.properties.support * 100) + '%)'));
         text.attr('x', (label.node().getBBox().width - text.node().getBBox().width) / 2);
@@ -249,14 +272,26 @@ class Map extends Component {
 
             // Find any other electorates
             otherLabels.forEach(l => l.style('opacity', 0));
+            let names = [];
             if (marker && marker.config.and) {
                 let others = []
                     .concat(marker.config.and)
                     .map(this.findElectorate)
                     .forEach((data, index) => {
-                        this.updateLabel(otherLabels[index], data, k * 1.5);
+                        if (data) names.push(data.properties.name);
+                        this.updateLabel(otherLabels[index], data, k);
                     });
             }
+
+            // Bring the current electorates to the front
+            features.selectAll('path').sort((a, b) => {
+                // main electorate
+                if (a.properties.name !== d.properties.name) return -1;
+                // other electorates
+                if (names.indexOf(a.properties.name) > -1) return -1;
+                // everything else
+                return 1;
+            });
 
             electorate = d;
         } else {
