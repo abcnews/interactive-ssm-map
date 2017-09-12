@@ -7,7 +7,6 @@ const TopoJSON = require('topojson');
 const ranger = require('power-ranger');
 const Geo = require('d3-geo');
 const scale = require('../data/colour-scale');
-const arrayFrom = require('array-from');
 
 const mapJSON = require('../data/map.quantized.json');
 
@@ -74,7 +73,10 @@ class Map extends Component {
             width = viewport.width;
             height = viewport.height;
 
-            projection = Geo.geoMercator().scale(width * 0.9).center([131, -27]).translate([width / 2, height / 2]);
+            projection = Geo.geoMercator()
+                .scale(width * 0.9)
+                .center([131, -27])
+                .translate([width / 2, height / 2]);
 
             path = Geo.geoPath().projection(projection);
 
@@ -112,7 +114,10 @@ class Map extends Component {
         width = window.innerWidth;
         height = window.innerHeight;
 
-        projection = Geo.geoMercator().scale(width * 0.9).center([131, -27]).translate([width / 2, height / 2]);
+        projection = Geo.geoMercator()
+            .scale(width * 0.9)
+            .center([131, -27])
+            .translate([width / 2, height / 2]);
 
         path = Geo.geoPath().projection(projection);
 
@@ -127,7 +132,11 @@ class Map extends Component {
             return f;
         });
 
-        svg = d3.select(this.wrapper).append('svg').attr('width', width).attr('height', height);
+        svg = d3
+            .select(this.wrapper)
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
 
         features = svg.append('g').attr('class', styles.features);
 
@@ -240,10 +249,13 @@ class Map extends Component {
 
             // Find any other electorates
             otherLabels.forEach(l => l.style('opacity', 0));
-            if (width > 1050 && marker && marker.config.and) {
-                let others = arrayFrom(marker.config.and).map(this.findElectorate).forEach((data, index) => {
-                    this.updateLabel(otherLabels[index], data, k * 1.5);
-                });
+            if (marker && marker.config.and) {
+                let others = []
+                    .concat(marker.config.and)
+                    .map(this.findElectorate)
+                    .forEach((data, index) => {
+                        this.updateLabel(otherLabels[index], data, k * 1.5);
+                    });
             }
 
             electorate = d;
@@ -267,7 +279,10 @@ class Map extends Component {
         if (k === mapZoom && this.state.electorate === electorate) return;
 
         // Highlight the new feature
-        features.selectAll('path').transition().duration(1400);
+        features
+            .selectAll('path')
+            .transition()
+            .duration(1400);
 
         // if the diff of the x and y are both huge then zoom out first
         const diffX = Math.abs(x - mapX);
