@@ -22,7 +22,7 @@ function getData() {
         return Immutable.fromJS(data);
     }
 
-    return fetch(root.getAttribute('data-data-url'), {
+    return fetch(root?.getAttribute('data-data-url' || "/cm/code/9153062/ssm-results-electorate-csv.js"), {
         credentials: 'same-origin'
     })
         .then(r => r.text())
