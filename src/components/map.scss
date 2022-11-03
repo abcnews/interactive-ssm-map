@@ -1,35 +1,35 @@
 path {
-    stroke-width: 0.02;
-    stroke: #333;
-    fill: #999;
+  stroke-width: 0.02;
+  stroke: #333;
+  fill: #999;
 }
 
 .circle {
-    stroke-width: 0.5px;
-    stroke: black;
-    cursor: pointer;
+  stroke-width: 0.5px;
+  stroke: black;
+  cursor: pointer;
 }
 
 .location-name {
-    fill: black;
-    stroke-width: 0.02px;
-    stroke: white;
-    font-size: 0.7px;
-    font-weight: bold;
-    text-anchor: middle;
+  fill: black;
+  stroke-width: 0.02px;
+  stroke: white;
+  font-size: 0.7px;
+  font-weight: bold;
+  text-anchor: middle;
 }
 
 .location-name-small {
-    fill: black;
-    stroke-width: 0.015px;
-    stroke: white;
-    font-size: 0.6px;
-    font-weight: bold;
-    text-anchor: middle;
+  fill: black;
+  stroke-width: 0.015px;
+  stroke: white;
+  font-size: 0.6px;
+  font-weight: bold;
+  text-anchor: middle;
 }
 
 @media only screen and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
-    path {
-        stroke-width: 0.005;
-    }
+  path {
+    stroke-width: 0.005;
+  }
 }

@@ -1,88 +1,88 @@
 .wrapper {
-    width: 100vw;
-    height: 100vh;
-    background: #2e3638;
+  width: 100vw;
+  height: 100vh;
+  background: #2e3638;
 }
 
 .before {
-    position: absolute;
-    top: 0;
-    left: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .during {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .after {
-    position: absolute;
-    bottom: 0;
-    height: 100vh !important;
+  position: absolute;
+  bottom: 0;
+  height: 100vh !important;
 }
 
 .legend {
-    position: absolute;
-    bottom: 5vh;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    width: 100%;
-    max-width: 400px;
-    padding: 15px;
-    border-radius: 3px;
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  width: 100%;
+  max-width: 400px;
+  padding: 15px;
+  border-radius: 3px;
 }
 
 .legend-title {
-    text-align: center;
-    font-size: 15px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
+  text-align: center;
+  font-size: 15px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
 .legend-bar {
-    height: 10px;
-    width: 100%;
-    margin-bottom: 5px;
-    background: linear-gradient(90deg, #00a3cf, #ffffff 50%, #e86b2b);
+  height: 10px;
+  width: 100%;
+  margin-bottom: 5px;
+  background: linear-gradient(90deg, #00a3cf, #ffffff 50%, #e86b2b);
 }
 
 .legend-labels {
-    display: flex;
+  display: flex;
 }
 
 .legend-label {
-    width: 50%;
-    text-align: left;
-    font-size: 13px;
-    margin: 0 0 0 10px;
+  width: 50%;
+  text-align: left;
+  font-size: 13px;
+  margin: 0 0 0 10px;
 }
 
 .legend-label:last-of-type {
-    text-align: right;
-    margin: 0 10px 0 0;
+  text-align: right;
+  margin: 0 10px 0 0;
 }
 
 @media only screen and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) {
-    .wrapper {
-        height: 100%;
-    }
+  .wrapper {
+    height: 100%;
+  }
 
-    .legend {
-        border-radius: 0;
-        bottom: 0;
-        background: #2e3638;
-        padding: 10px;
-    }
+  .legend {
+    border-radius: 0;
+    bottom: 0;
+    background: #2e3638;
+    padding: 10px;
+  }
 
-    .legend-title {
-        font-size: 12px;
-        margin-bottom: 5px;
-    }
+  .legend-title {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
 
-    .legend-labels {
-        font-size: 10px;
-    }
+  .legend-labels {
+    font-size: 10px;
+  }
 }
