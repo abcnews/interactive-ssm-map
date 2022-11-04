@@ -47,7 +47,7 @@ function getData() {
 let scrollytellers;
 function getScrollytellers() {
   if (!scrollytellers) {
-    scrollytellers = window.__ODYSSEY__.utils.anchors
+    scrollytellers = window.__ODYSSEY__.utils.mounts
       .getSections("scrollyteller")
       .map((section) => {
         section.mountNode = document.createElement("div");
